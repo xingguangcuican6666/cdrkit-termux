@@ -1,0 +1,6 @@
+usr/bin/wodim
+usr/bin/readom
+usr/sbin/netscsid
+usr/share/man/man1/readom.1
+usr/share/man/man1/wodim.1
+doc/READMEs/README.ATAPI.setup usr/share/doc/wodim/

@@ -1,0 +1,10 @@
+update_geteltorito.patch
+fix_typo.patch
+fix_libcap_detection.patch
+add-efi-boot.patch
+gcc10.patch
+fix_format-security.patch
+fix-implicit-function-declaration.patch
+allow_to_set_creation_date.diff
+cmake-4.patch
+isoinfo-add-efi-patch

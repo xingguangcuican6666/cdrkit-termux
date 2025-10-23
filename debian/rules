@@ -1,0 +1,58 @@
+#!/usr/bin/make -f
+#
+# debian/rules file for cdrkit.  GPL2
+# Original from Erik Andersen <andersee@debian.org>
+#
+
+PACKAGE = cdrkit
+
+i=$(CURDIR)/debian/tmp/usr
+ziso_VERSION = $(shell cat 3rd-party/zisofs_tools/version)
+include /usr/share/dpkg/default.mk
+
+%:
+	dh $@
+
+override_dh_autoreconf:
+	dh_autoreconf
+	echo "#define ZISOFS_TOOLS_VERSION \"$(ziso_VERSION)\"" > 3rd-party/zisofs_tools/version.h
+	dh_autoreconf -D3rd-party/zisofs_tools
+
+override_dh_auto_configure:
+	dh_auto_configure
+	dh_auto_configure -D3rd-party/zisofs_tools
+
+override_dh_auto_build:
+#	@if test -f ../cdrkit_$(DEB_VERSION).tar.gz ; then \
+#		echo "You should not create native packages! Remove ../cdrkit_$(DEB_VERSION).tar.gz and copy upstream source to .orig.tar.gz" ; \
+#		exit 1 ; \
+#	fi
+	@echo "--- Compiling"
+	dh_auto_build
+	dh_auto_build -D3rd-party/zisofs_tools
+
+override_dh_auto_clean:
+	@echo "--- Cleaning"
+	dh_auto_clean
+	dh_auto_clean -D3rd-party/zisofs_tools
+	-rm -rf debian/build debian/files
+	-rm -f `find . -name "*~"`
+	-rm -rf `find . -name "\.deps"`
+	-rm -rf `find . -name "\.libs"`
+	-rm -rf `find . -name "*\.rej"`
+	-rm -rf build
+
+override_dh_auto_install:
+	@echo "--- Installing"
+	dh_auto_install -- PREFIX=/usr
+	install -m 755 3rd-party/geteltorito/geteltorito.pl $(i)/bin/geteltorito
+	install -m 755 3rd-party/zisofs_tools/mkzftree $(i)/bin/
+	install -m 755 icedax/cdda2ogg $(i)/bin/
+	install -m 755 icedax/cdda2mp3 $(i)/bin/
+	install -m 755 icedax/readmult $(i)/bin/
+	install -m 755 icedax/pitchplay $(i)/bin/
+# wodim
+	@echo "--- Building: wodim"
+	mkdir -p $(CURDIR)/debian/wodim/etc
+	cp -a wodim/wodim.dfl $(CURDIR)/debian/wodim/etc/wodim.conf
+	cp -a netscsid/netscsid.dfl $(CURDIR)/debian/wodim/etc/netscsid.conf
